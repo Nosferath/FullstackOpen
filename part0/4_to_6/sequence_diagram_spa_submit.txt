@@ -1,0 +1,6 @@
+title FullStack Open Notes Form Sequence Diagram, SPA submit
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note [{note: The+Game}]
+note over server: Server pushes new note to its internal notes object.\nThis object will be obtained later as data.json.\nJavaScript code prevents redirect.
+server-->browser: STATUS 201 Created. {message:"note created"}
+note over browser: JavaScript code redraws the list on the browser without reloading.

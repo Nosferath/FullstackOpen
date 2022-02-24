@@ -1,0 +1,15 @@
+title FullStack Open Notes Form Sequence Diagram
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note [{note: The+Game}]
+note over server: Server pushes new note to its internal notes object.\nThis object will be obtained later as data.json
+server-->browser: STATUS 302 OK, Redirect to https://studies.cs.helsinki.fi/exampleapp/notes
+browser->server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+server-->browser: notes.html
+browser->server: HTTP GET main.css
+server-->browser: STATUS 304 (Not Modified)
+browser->server: HTTP GET main.js
+server-->browser: STATUS 304 (Not Modified)
+note over browser: Browser starts executing code which requires data.json
+browser->server: HTTP GET data.json
+server-->browser: data.json
+note over browser: jscode execution renders notes on page
