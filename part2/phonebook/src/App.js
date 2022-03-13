@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import Filter from "./components/Filter";
+import Notification from "./components/Notification";
 
 import personsService from "./services/persons";
 
@@ -11,6 +12,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [currentFilter, setCurrentFilter] = useState("");
   const [filteredPersons, setFilteredPersons] = useState(persons);
+  const [notification, setNotification] = useState(null);
+  const [isWarning, setIsWarning] = useState(false);
 
   // Initial data fetching effect
   useEffect(() => {
@@ -18,11 +21,18 @@ const App = () => {
     personsService.getAll().then((response) => setPersons(response));
   }, []);
 
+  const changeNotification = (message, warningStatus = false) => {
+    setNotification(message);
+    setIsWarning(warningStatus);
+    setTimeout(() => setNotification(null), 5000)
+  }
+
   const deletePerson = (person) => {
     const confirmDelete = window.confirm(`Delete ${person.name}?`);
     if (confirmDelete) {
       personsService.remove(person).then((response) => {
         setPersons(persons.filter((p) => p.id !== person.id));
+        changeNotification(`Removed ${person.name}`)
       });
     }
   };
@@ -30,6 +40,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} warningStatus={isWarning}/>
       <Filter
         persons={persons}
         currentFilter={currentFilter}
@@ -44,6 +55,7 @@ const App = () => {
         setNewName={setNewName}
         newNumber={newNumber}
         setNewNumber={setNewNumber}
+        changeNotification={changeNotification}
       />
       <h2>Numbers</h2>
       <Persons

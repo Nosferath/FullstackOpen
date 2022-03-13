@@ -8,6 +8,7 @@ const PersonForm = ({
   setNewName,
   newNumber,
   setNewNumber,
+  changeNotification,
 }) => {
   const addPerson = (event) => {
     event.preventDefault();
@@ -35,7 +36,11 @@ const PersonForm = ({
           person.id === response.id ? response : person
         ));
         setPersons(modifiedPersons);
-      });
+        changeNotification(`Modified ${response.name}`)
+      })
+        .catch(error => {
+          changeNotification(`Information of ${modifiedPerson.name} has already been removed from server`, true)
+        });
     } else {
       const newPerson = {
         name: newName,
@@ -45,6 +50,7 @@ const PersonForm = ({
         setPersons(persons.concat(response));
         setNewName("");
         setNewNumber("");
+        changeNotification(`Added ${response.name}`)
       });
     }
   };
