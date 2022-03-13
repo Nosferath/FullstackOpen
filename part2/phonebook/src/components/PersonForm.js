@@ -1,4 +1,5 @@
 import React from "react";
+import personsService from "../services/persons";
 
 const PersonForm = ({
   persons,
@@ -11,17 +12,41 @@ const PersonForm = ({
   const addPerson = (event) => {
     event.preventDefault();
     const currentNames = persons.map((person) => person.name);
+
     if (currentNames.includes(newName)) {
-      window.alert(`${newName} is already added to phonebook`);
-      return;
+      // Add/modify an existing name
+      const confirm = window.confirm(
+        `${newName} is already added to phonebook. Replace the old number with a new one?`
+      );
+      if (!confirm) {
+        return;
+      }
+      // Get the ID of the person to modify
+      const personId = persons.filter(person => person.name === newName)[0].id;
+      const modifiedPerson = {
+        id: personId,
+        name: newName,
+        number: newNumber,
+      };
+      personsService.put(modifiedPerson).then((response) => {
+        console.log("modify response", response);
+        const modifiedPersons = persons.map((person) => (
+          // Modify only the current person
+          person.id === response.id ? response : person
+        ));
+        setPersons(modifiedPersons);
+      });
+    } else {
+      const newPerson = {
+        name: newName,
+        number: newNumber,
+      };
+      personsService.create(newPerson).then((response) => {
+        setPersons(persons.concat(response));
+        setNewName("");
+        setNewNumber("");
+      });
     }
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-    };
-    setPersons(persons.concat(newPerson));
-    setNewName("");
-    setNewNumber("");
   };
 
   const handleNameChange = (event) => {
